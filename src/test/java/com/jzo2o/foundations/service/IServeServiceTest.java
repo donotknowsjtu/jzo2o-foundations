@@ -1,5 +1,6 @@
 package com.jzo2o.foundations.service;
 
+import com.jzo2o.foundations.service.IServersService;
 import com.jzo2o.common.model.PageResult;
 import com.jzo2o.foundations.model.dto.request.ServePageQueryReqDTO;
 import com.jzo2o.foundations.model.dto.response.*;
@@ -15,9 +16,18 @@ import java.util.List;
 @SpringBootTest
 @Slf4j
 class IServeServiceTest {
-//    @Resource
-//    private IServeService serveService;
+    @Resource
+    private IServersService serveService;
 
+    @Test
+    void testServePage() {
+        ServePageQueryReqDTO reqDTO = new ServePageQueryReqDTO();
+        reqDTO.setRegionId(1686303222843662337L);
+        reqDTO.setPageNo(1L);
+        reqDTO.setPageSize(2L);
+        PageResult<ServeResDTO> page = serveService.page(reqDTO);
+        Assert.notNull(page, "分页结果不能为空");
+    }
 //    @Test
 //    void listServeItemByCityCode() {
 //        List<Long> longs = serveService.queryServeItemIdListByCityCode("010");
