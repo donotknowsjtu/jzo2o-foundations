@@ -1,6 +1,5 @@
 package com.jzo2o.foundations.service;
 
-import com.jzo2o.foundations.service.IServersService;
 import com.jzo2o.common.model.PageResult;
 import com.jzo2o.foundations.model.dto.request.ServePageQueryReqDTO;
 import com.jzo2o.foundations.model.dto.response.*;
@@ -10,14 +9,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
-import java.util.List;
 
 @SpringBootTest
 @Slf4j
 class IServeServiceTest {
     @Resource
-    private IServersService serveService;
+    private IServeService serveService;
 
     @Test
     void testServePage() {

@@ -22,6 +22,7 @@ import com.jzo2o.foundations.model.dto.request.ServeItemPageQueryReqDTO;
 import com.jzo2o.foundations.model.dto.request.ServeItemUpsertReqDTO;
 import com.jzo2o.foundations.model.dto.request.ServeSyncUpdateReqDTO;
 import com.jzo2o.foundations.service.IServeItemService;
+import com.jzo2o.foundations.service.IServeService;
 import com.jzo2o.foundations.service.IServeSyncService;
 import com.jzo2o.mysql.utils.PageHelperUtils;
 import org.springframework.cache.annotation.CacheEvict;
@@ -48,6 +49,8 @@ public class ServeItemServiceImpl extends ServiceImpl<ServeItemMapper, ServeItem
     @Resource
     private ServeTypeMapper serveTypeMapper;
 
+    @Resource
+    private IServeService serveService;
     /**
      * 服务项新增
      *
@@ -163,7 +166,10 @@ public class ServeItemServiceImpl extends ServiceImpl<ServeItemMapper, ServeItem
 
         //有区域在使用该服务将无法禁用（存在关联的区域服务且状态为上架表示有区域在使用该服务项）
         //todo
-
+        int serveOnSaleCounts = serveService.queryServeCountByServeItemIdAndSaleStatus(id, FoundationStatusEnum.ENABLE.getStatus());
+        if (serveOnSaleCounts > 0) {
+            throw new ForbiddenOperationException("有区域在使用该服务项，无法禁用");
+        }
         //更新禁用状态
         LambdaUpdateWrapper<ServeItem> updateWrapper = Wrappers.<ServeItem>lambdaUpdate().eq(ServeItem::getId, id).set(ServeItem::getActiveStatus, FoundationStatusEnum.DISABLE.getStatus());
         update(updateWrapper);
