@@ -23,5 +23,39 @@
         WHERE
             serve.region_id = #{regionId}
     </select>
+    <select id="findServeIconCategoryByRegionId" resultMap= "ServeCategoryMap"
+            parameterType="java.lang.Long">
+        SELECT type.id              serve_type_id,
+               serve.city_code,
+               type.serve_type_icon,
+               type.name            serve_type_name,
+               type.sort_num        serve_type_sort_num,
+               item.id              serve_item_id,
+               item.name            serve_item_name,
+               item.sort_num        serve_item_sort_num,
+               item.serve_item_icon serve_item_icon,
+               serve.id
+        FROM serve
+                 inner JOIN serve_item AS item ON serve.serve_item_id = item.id
+                 inner JOIN serve_type AS type ON item.serve_type_id = type.id
+        where serve.region_id = #{regionId} and serve.sale_status = 2
+        order by type.sort_num, item.sort_num;
+    </select>
+
+    <resultMap id="ServeCategoryMap" type="com.jzo2o.foundations.model.dto.response.ServeCategoryResDTO">
+        <id column="serve_type_id" property="serveTypeId"></id>
+        <result column="city_code" property="cityCode"></result>
+        <result column="serve_type_icon" property="serveTypeIcon"></result>
+        <result column="serve_type_name" property="serveTypeName"></result>
+        <result column="serve_type_sort_num" property="serveTypeSortNum"></result>
+        <!-- 1对多映射-->
+        <collection property="serveResDTOList" ofType="com.jzo2o.foundations.model.dto.response.ServeSimpleResDTO">
+            <id column="serve_id" property = "id"></id>
+            <result column="serve_item_id" property="serveItemId"></result>
+            <result column="serve_item_name" property="serveItemName"></result>
+            <result column="serve_item_sort_num" property="serveItemSortNum"></result>
+            <result column="serve_item_icon" property="serveItemIcon"></result>
+        </collection>
+    </resultMap>
 
 </mapper>
