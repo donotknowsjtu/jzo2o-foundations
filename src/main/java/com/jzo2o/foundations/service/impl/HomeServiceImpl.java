@@ -2,6 +2,7 @@ package com.jzo2o.foundations.service.impl;
 
 import com.jzo2o.common.utils.CollUtils;
 import com.jzo2o.common.utils.ObjectUtils;
+import com.jzo2o.foundations.constants.RedisConstants;
 import com.jzo2o.foundations.enums.FoundationStatusEnum;
 import com.jzo2o.foundations.mapper.ServeMapper;
 import com.jzo2o.foundations.model.domain.Region;
@@ -10,6 +11,8 @@ import com.jzo2o.foundations.model.dto.response.ServeSimpleResDTO;
 import com.jzo2o.foundations.service.HomeService;
 import com.jzo2o.foundations.service.IRegionService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -29,7 +32,12 @@ public class HomeServiceImpl implements HomeService {
     private ServeMapper serveMapper;
     @Resource
     private IRegionService regionService;
-
+    @Caching(
+            cacheable = {
+            @Cacheable(value = RedisConstants.CacheName.SERVE_ICON, key = "#regionId", cacheManager = RedisConstants.CacheManager.FOREVER, unless = "#result.size() == 0"),
+            @Cacheable(value = RedisConstants.CacheName.SERVE_ICON, key = "#regionId", cacheManager = RedisConstants.CacheManager.THIRTY_MINUTES, unless = "#result.size() != 0")
+    }
+    )
     public List<ServeCategoryResDTO> queryServeIconCategoryByRegionIdCache(Long regionId){
         // 查询区域信息
         Region region = regionService.getById(regionId);
